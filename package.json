@@ -1,0 +1,25 @@
+{
+  "name": "private-duo-chat",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A private, real-time two-person chat with SQLite persistence.",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js",
+    "test": "node --test tests/*.test.js",
+    "check": "node --check backend/server.js && node --check backend/database.js && node --check backend/roomManager.js && node --check backend/socketHandler.js && node --check backend/validation.js && node --check backend/security.js && node --check frontend/app.js && node --check tests/validation.test.js && node --check tests/database.test.js && node --check tests/roomManager.test.js && node --check tests/socket.test.js"
+  },
+  "engines": {
+    "node": ">=20.11.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.0",
+    "helmet": "^8.0.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
+  }
+}

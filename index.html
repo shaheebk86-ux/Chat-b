@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d18"><meta name="description" content="A private, real-time conversation space for two people.">
+  <title>PRIVATE DUO CHAT — Your Private Space</title>
+  <link rel="preconnect" href="/socket.io/" crossorigin><link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#home" aria-label="Private Duo Chat home"><span class="brand-mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.8A2.8 2.8 0 0 1 6.8 3h10.4A2.8 2.8 0 0 1 20 5.8v7.4a2.8 2.8 0 0 1-2.8 2.8h-5.1l-4.5 3.2v-3.2h-.8A2.8 2.8 0 0 1 4 13.2z"/></svg></span><span>PRIVATE <b>DUO</b> CHAT</span></a>
+    <nav class="nav-links" aria-label="Main navigation"><a href="#home">Home</a><a href="#about">About</a><a href="#privacy">Privacy</a></nav>
+    <div class="header-actions"><span class="server-pill" role="status" aria-live="polite"><i id="serverDot" class="status-dot"></i><span id="serverLabel">Connecting…</span></span><button class="icon-button" id="themeToggle" type="button" aria-label="Switch color theme" title="Switch theme"><span id="themeIcon">☼</span></button></div>
+  </header>
+  <main id="home">
+    <section id="landing" class="hero-shell">
+      <div class="hero-copy"><div class="eyebrow"><span class="eyebrow-line"></span> A LITTLE SPACE, JUST FOR TWO</div><h1>Your Private<br><span>Space.</span></h1><p class="hero-subtitle">Simple, private, real-time conversations for two. No noise, no crowds — just you and your person.</p><div class="hero-points"><span><i>✦</i> Two people, one room</span><span><i>↗</i> Instant messages</span><span><i>⌁</i> No app install needed</span></div></div>
+      <section class="entry-card" aria-labelledby="entryTitle"><div class="card-glow"></div><div class="card-topline"><div class="mini-icon">✧</div><span class="secure-label"><i></i> PRIVATE ROOM ACCESS</span></div><h2 id="entryTitle">Start a conversation</h2><p class="card-description">Create a room or join someone with their invite code.</p>
+        <form id="entryForm" novalidate><label for="displayName">Your display name <span>OPTIONAL</span></label><input id="displayName" maxlength="32" autocomplete="nickname" placeholder="What should we call you?" aria-describedby="nameError"><small class="field-error" id="nameError"></small>
+          <div class="field-label-row"><label for="roomCode">Room code</label><span>12 CHARACTERS</span></div><input id="roomCode" class="code-input" maxlength="14" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="ENTER INVITE CODE" aria-describedby="codeError"><small class="field-error" id="codeError"></small>
+          <div class="button-stack"><button id="createBtn" class="button button-primary" type="button"><span>Create private room</span><span class="button-arrow">↗</span></button><button id="joinBtn" class="button button-secondary" type="button"><span>Join a room</span><span class="button-arrow">→</span></button></div>
+        </form><div class="card-footnote"><span class="lock-icon">⌑</span> Your room is accessible only with its invite code.</div><p id="entryNotice" class="notice" role="status" aria-live="polite"></p>
+      </section>
+      <div class="hero-bottom"><div class="avatar-stack"><span>✦</span><span>♡</span></div><span>Made for conversations that matter.</span><span class="bottom-line"></span></div>
+    </section>
+    <section id="about" class="info-section"><div class="section-kicker">HOW IT WORKS</div><h2>Two people. One simple space.</h2><div class="steps-grid"><article><span>01</span><h3>Create your room</h3><p>Start a private room and get a unique invite code.</p></article><article><span>02</span><h3>Share the code</h3><p>Send the code to the one person you want to talk to.</p></article><article><span>03</span><h3>Talk in real time</h3><p>Exchange messages instantly, wherever you both are.</p></article></div></section>
+    <section id="privacy" class="privacy-strip"><div class="privacy-symbol">◇</div><div><h3>A note about privacy</h3><p>Rooms limit access to two active participants. Messages are stored on the server in SQLite and are not end-to-end encrypted. Use HTTPS in production and share invite codes carefully.</p></div></section>
+  </main>
+  <main id="chatView" class="chat-view hidden" aria-label="Chat room">
+    <section class="chat-panel"><header class="chat-header"><div class="chat-room-identity"><div class="room-avatar">✧</div><div><div class="chat-room-title">Your private room</div><div class="room-meta"><span id="chatConnectionDot" class="status-dot"></span><span id="chatConnectionText" role="status" aria-live="polite">Connecting…</span><span class="meta-divider">·</span><span id="participantCount">1 of 2 here</span></div></div></div><div class="chat-actions"><div class="room-code-block"><span>ROOM CODE</span><strong id="activeRoomCode">—</strong><button id="copyRoomBtn" type="button" aria-label="Copy room code">▢</button></div><button id="leaveBtn" class="leave-button" type="button">Leave room <span>↗</span></button><button class="icon-button" id="chatThemeToggle" type="button" aria-label="Switch color theme">☼</button></div></header>
+      <div class="chat-banner"><span class="banner-sparkle">✦</span><span>Messages in this room are visible to its two participants.</span></div>
+      <div id="messages" class="messages" role="log" aria-live="polite" aria-relevant="additions text"><div id="emptyState" class="empty-state"><div class="empty-orbit"><span>✧</span></div><h3>Your conversation starts here</h3><p>Send the first message and say hello.</p></div></div>
+      <div class="typing-row" id="typingRow" aria-live="polite"><span class="typing-dots"><i></i><i></i><i></i></span><span id="typingText">Someone is typing…</span></div>
+      <form id="composer" class="composer"><label class="sr-only" for="messageInput">Write a message</label><textarea id="messageInput" rows="1" maxlength="4000" placeholder="Write a message…" disabled></textarea><div class="composer-bottom"><span id="messageCount">0 / 4000</span><span class="composer-hint">Enter to send · Shift + Enter for a new line</span><button class="send-button" id="sendBtn" type="submit" disabled aria-label="Send message">↑</button></div></form>
+    </section>
+  </main>
+  <footer class="site-footer"><span>© <span id="year"></span> PRIVATE DUO CHAT</span><span>Two voices. One private space.</span><a href="#privacy">Privacy details</a></footer>
+  <dialog id="leaveDialog" class="confirm-dialog"><div class="dialog-mark">↗</div><h2>Leave this room?</h2><p>You’ll leave the conversation. Your existing messages will remain saved.</p><div class="dialog-actions"><button id="cancelLeave" class="button button-secondary" type="button">Stay here</button><button id="confirmLeave" class="button button-danger" type="button">Leave room</button></div></dialog>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script src="/socket.io/socket.io.js" defer></script><script src="/app.js" defer></script>
+</body></html>
